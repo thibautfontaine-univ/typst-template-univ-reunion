@@ -1,0 +1,20 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Typst - Garder uniquement les PDFs des exemples
+*.pdf
+!examples/*.pdf
+
+# Éditeurs
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Temporaires
+*.log
+*.aux
+*.tmp
