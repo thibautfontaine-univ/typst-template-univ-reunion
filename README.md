@@ -30,6 +30,7 @@ Ce template propose 3 styles de page de couverture :
 │   ├── exemple-tp-nextcloud.pdf
 │   ├── exemple-stage-recherche.typ  # Exemple style classique (Rapport recherche)
 │   └── exemple-stage-recherche.pdf
+├── fonts/                           # Polices embarquées (Playfair Display + Raleway, SIL OFL)
 ├── img/                             # Logos et images
 │   ├── UR_LOGO_2025_BLEU.jpg
 │   ├── Univ_LOGO_2025.png
@@ -70,6 +71,8 @@ Voir le guide d'installation de Typst : [docs/installation-typst.md](docs/instal
   style: "moderne",  // "moderne", "classique" ou "minimaliste"
 )
 ```
+
+> **Chemins des logos** : ils sont relatifs à **ton** fichier `.typ`, pas au template. Depuis `examples/`, le chemin vers la racine est donc `"../img/..."`. Si tu travailles à la racine du projet, utilise `"img/..."`.
 
 ### 3. Configurer le document
 
@@ -153,13 +156,17 @@ Votre texte ici...
 
 ## Compilation
 
+Les polices sont embarquées dans le dossier `fonts/` : ajoute `--font-path fonts` à la compilation pour les charger (aucune installation système nécessaire).
+
 ```bash
 # Compiler un document (depuis la racine du projet)
-typst compile --root . examples/exemple-rapport.typ
+typst compile --root . --font-path fonts examples/exemple-rapport.typ
 
 # Compiler avec watch (recompilation automatique)
-typst watch --root . examples/exemple-rapport.typ
+typst watch --root . --font-path fonts examples/exemple-rapport.typ
 ```
+
+> Sans `--font-path fonts`, Typst affiche des avertissements `unknown font family` et substitue les polices. Le rendu reste correct uniquement si Playfair Display et Raleway sont installées sur le système.
 
 ## Couleurs officielles
 
@@ -173,6 +180,8 @@ Le template utilise les couleurs de la charte graphique de l'Université de La R
 
 - **Corps de texte** : Raleway (sans-serif)
 - **Titres** : Playfair Display (serif)
+
+Les deux polices (licence SIL OFL) sont **embarquées** dans `fonts/` et voyagent avec le template — aucune installation requise, il suffit de compiler avec `--font-path fonts`. En cas d'absence, le repli se fait sur **Libertinus Serif**, livrée d'office avec Typst (donc jamais de police manquante).
 
 ## Licence
 

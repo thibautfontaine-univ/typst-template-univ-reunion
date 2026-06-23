@@ -120,7 +120,7 @@
               // Titre principal
               align(center)[
                 #text(
-                  font: ("Playfair Display", "Georgia", "Times New Roman"),
+                  font: ("Playfair Display", "Libertinus Serif"),
                   size: 28pt,
                   fill: univ-bleu-outremer,
                   weight: "bold",
@@ -249,7 +249,7 @@
             stroke: (y: 2pt + univ-bleu-outremer),
             inset: 20pt,
             text(
-              font: ("Playfair Display", "Georgia", "Times New Roman"),
+              font: ("Playfair Display", "Libertinus Serif"),
               size: 24pt,
               weight: "bold",
               fill: univ-bleu-outremer,
@@ -334,7 +334,7 @@
 
         // Titre
         text(
-          font: ("Playfair Display", "Georgia", "Times New Roman"),
+          font: ("Playfair Display", "Libertinus Serif"),
           size: 32pt,
           weight: "bold",
           fill: univ-bleu-outremer,
@@ -404,7 +404,7 @@
 
   // Police principale : Raleway (sans-serif) pour le corps du texte
   set text(
-    font: ("Raleway", "Arial", "Helvetica"),
+    font: ("Raleway", "Libertinus Serif"),
     size: 11pt,
     lang: lang,
   )
@@ -466,7 +466,7 @@
       width: 100%,
       {
         text(
-          font: ("Playfair Display", "Georgia", "Times New Roman"),
+          font: ("Playfair Display", "Libertinus Serif"),
           size: 22pt,
           weight: "bold",
           fill: univ-bleu-outremer,
@@ -488,7 +488,7 @@
   show heading.where(level: 2): it => {
     v(16pt)
     text(
-      font: ("Playfair Display", "Georgia", "Times New Roman"),
+      font: ("Playfair Display", "Libertinus Serif"),
       size: 16pt,
       weight: "bold",
       fill: univ-bleu-outremer.lighten(20%),
@@ -506,7 +506,7 @@
   show heading.where(level: 3): it => {
     v(12pt)
     text(
-      font: ("Playfair Display", "Georgia", "Times New Roman"),
+      font: ("Playfair Display", "Libertinus Serif"),
       size: 13pt,
       weight: "semibold",
       fill: univ-bleu-clair,
@@ -724,6 +724,179 @@
   }
 }
 
+/// Crée une lettre formelle (recommandation, motivation, etc.)
+/// - logo-gauche: Logo à gauche de l'en-tête (ex: université)
+/// - logo-droite: Logo à droite de l'en-tête (ex: entreprise, composante)
+/// - logo-centre: Logo centré dans l'en-tête (utilisé seul, prioritaire sur gauche/droite)
+/// - expediteur-nom: Nom de l'expéditeur
+/// - expediteur-titre: Titre/fonction de l'expéditeur
+/// - expediteur-service: Service ou département
+/// - expediteur-adresse: Adresse de l'expéditeur (facultatif)
+/// - expediteur-email: Email de l'expéditeur (facultatif)
+/// - expediteur-telephone: Téléphone de l'expéditeur (facultatif)
+/// - destinataire: Bloc destinataire (facultatif, texte libre)
+/// - lieu: Lieu de rédaction (ex: "Saint-Denis de La Réunion")
+/// - date: Date de la lettre
+/// - objet: Objet de la lettre
+/// - corps: Contenu de la lettre (content)
+/// - signature-img: Chemin vers une image de signature (facultatif)
+#let lettre-formelle(
+  logo-gauche: none,
+  logo-droite: none,
+  logo-centre: none,
+  expediteur-nom: "",
+  expediteur-titre: none,
+  expediteur-service: none,
+  expediteur-adresse: none,
+  expediteur-email: none,
+  expediteur-telephone: none,
+  destinataire: none,
+  lieu: none,
+  date: none,
+  objet: none,
+  corps,
+  signature-img: none,
+) = {
+  set document(
+    title: if objet != none { objet } else { "Lettre" },
+    author: (expediteur-nom,),
+  )
+
+  set text(
+    font: ("Raleway", "Libertinus Serif"),
+    size: 11pt,
+    lang: "fr",
+  )
+
+  set page(
+    paper: "a4",
+    margin: (
+      top: 2.5cm,
+      bottom: 2.5cm,
+      left: 2.5cm,
+      right: 2.5cm,
+    ),
+    header: none,
+    footer: none,
+  )
+
+  set par(justify: true, leading: 0.65em)
+
+  // === EN-TÊTE AVEC LOGOS ===
+  {
+    let has-left = logo-gauche != none
+    let has-right = logo-droite != none
+    let has-centre = logo-centre != none
+
+    if has-centre {
+      align(center, image(logo-centre, height: 45pt))
+      v(6pt)
+      line(length: 100%, stroke: 1.5pt + univ-bleu-outremer)
+      v(12pt)
+    } else if has-left or has-right {
+      grid(
+        columns: if has-left and has-right { (1fr, 1fr) } else { (1fr,) },
+        align: if has-left and has-right { (left, right) } else if has-left { (left,) } else { (right,) },
+        ..if has-left { (image(logo-gauche, height: 45pt),) } else { () },
+        ..if has-right { (image(logo-droite, height: 45pt),) } else { () },
+      )
+      v(6pt)
+      line(length: 100%, stroke: 1.5pt + univ-bleu-outremer)
+      v(12pt)
+    }
+  }
+
+  // === BLOC EXPÉDITEUR ===
+  {
+    set text(size: 9.5pt)
+    text(weight: "bold", fill: univ-bleu-outremer, size: 11pt, expediteur-nom)
+    linebreak()
+    if expediteur-titre != none {
+      text(fill: univ-gris, expediteur-titre)
+      linebreak()
+    }
+    if expediteur-service != none {
+      text(fill: univ-gris, expediteur-service)
+      linebreak()
+    }
+    if expediteur-adresse != none {
+      text(fill: univ-gris, expediteur-adresse)
+      linebreak()
+    }
+    if expediteur-email != none {
+      text(fill: univ-bleu-outremer, expediteur-email)
+      linebreak()
+    }
+    if expediteur-telephone != none {
+      text(fill: univ-gris, expediteur-telephone)
+    }
+  }
+
+  v(14pt)
+
+  // === LIEU ET DATE ===
+  {
+    let date-str = if date != none {
+      if type(date) == datetime {
+        date.display("[day] [month repr:long] [year]")
+      } else {
+        date
+      }
+    }
+
+    align(right)[
+      #text(size: 11pt)[
+        #if lieu != none [#lieu, ]
+        #if date-str != none [le #date-str]
+      ]
+    ]
+  }
+
+  v(14pt)
+
+  // === DESTINATAIRE ===
+  if destinataire != none {
+    align(right)[
+      #block(
+        width: 50%,
+        align(left)[
+          #text(size: 11pt, destinataire)
+        ]
+      )
+    ]
+    v(14pt)
+  }
+
+  // === OBJET ===
+  if objet != none {
+    text(weight: "bold", size: 11pt)[Objet : ]
+    text(size: 11pt, objet)
+    v(14pt)
+  }
+
+  // === CORPS DE LA LETTRE ===
+  corps
+
+  v(30pt)
+
+  // === SIGNATURE ===
+  align(right)[
+    #block(width: 50%)[
+      #align(left)[
+        #text(weight: "bold", expediteur-nom)
+        #if expediteur-titre != none {
+          linebreak()
+          text(size: 10pt, fill: univ-gris, expediteur-titre)
+        }
+        #if signature-img != none {
+          v(8pt)
+          image(signature-img, height: 50pt)
+        }
+      ]
+    ]
+  ]
+}
+
 /// Crée une quatrième de couverture (page de garde finale)
 /// - logo-gauche: Logo à gauche du footer (ex: université)
 /// - logo-centre: Logo au centre du footer (ex: composante IUT, ESIROI, etc.)
@@ -735,7 +908,7 @@
 /// - site-web: Site web (facultatif)
 /// - linkedin: Profil LinkedIn (facultatif)
 #let page-garde-finale(
-  logo-gauche: "img/UR_LOGO_2025_BLEU.jpg",
+  logo-gauche: "../img/UR_LOGO_2025_BLEU.jpg",
   logo-centre: none,
   logo-droite: none,
   nom: "",
@@ -782,7 +955,7 @@
             // Nom de l'auteur
             align(center)[
               #text(
-                font: ("Playfair Display", "Georgia", "Times New Roman"),
+                font: ("Playfair Display", "Libertinus Serif"),
                 size: 20pt,
                 weight: "bold",
                 fill: univ-bleu-outremer,
